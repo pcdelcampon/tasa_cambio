@@ -1,0 +1,63 @@
+---
+title: "Tasas de Cambio"
+author: "Pedro Cesar Del Campo Neira"
+date: "18 de noviembre de 2015"
+output: html_document
+---
+
+A continuación se presentan las tasas de cambio para monedas entre el Peso colombiano, Peso chileno y Dolar americano. 
+
+Esto se elabora en el lenguaje de programación [R](https://cran.r-project.org/). y la interfaz de progamación ofrecida en [Rstudio](https://www.rstudio.com/). 
+
+Se elaboran gráficas interactivas, para mayor manejo del usuario, y se colocan en un archivo para colocar en la internet. Desde la consolar de R se llaman las libreria **quantmod** que permite el acceso a varias bases de datos con variedad de información económica y financiera.
+Por otro lado, el paquete **dygraphs** permite la elaboración de graficos interactivos.
+
+
+```{r, message=FALSE}
+library(quantmod)					# Quandl package
+library(dygraphs)
+```
+
+Después de cargar las librerias, se descarga la información de las tasas de cambio monetario solicitados usando la función `getFX`.
+
+```{r }
+
+  COP_USD <- getFX( "USD/COP", from = Sys.Date() - 360*2  , auto.assign = F )
+  CLP_USD <- getFX( "USD/CLP", from = Sys.Date() - 360*2  , auto.assign = F )  
+  COP_CLP <- getFX( "CLP/COP", from = Sys.Date() - 360*2  , auto.assign = F )
+  
+  plot(1:10)
+```
+
+Luego, se realizan las gráficas con la función `dygraph`.
+
+
+```{r }
+
+  dygraph( COP_USD , ylab="$ COP" , main = "USD Price") %>%
+          dyOptions(fillGraph = TRUE, fillAlpha = 0.4 , colors= "red") %>%
+          dyRangeSelector( dateWindow = c( Sys.Date() -60, Sys.Date() ) )
+
+  
+```
+
+```{r }
+
+  dygraph( CLP_USD , ylab="$ CLP" , main = "USD Price") %>%
+          dyOptions(fillGraph = TRUE, fillAlpha = 0.4 , colors= "blue") %>%
+          dyRangeSelector( dateWindow = c( Sys.Date() -60, Sys.Date() ) )
+
+  
+```
+
+```{r }
+
+  dygraph( COP_CLP , ylab="$ COP" , main = "Chilean Pesos Price") %>%
+          dyOptions(fillGraph = TRUE, fillAlpha = 0.4 , colors= "green") %>%
+          dyRangeSelector( dateWindow = c( Sys.Date() -60, Sys.Date() ) )
+
+  
+```
+
+El paquete **quantmod** es muy efectivo en la descarga de datos económicos y financieros que se renuevan constantemente. Sin embargo, tiene un problema. Las tasas de cambio monetarias que descarga no incluyen el día actual en que se descargan.
+
